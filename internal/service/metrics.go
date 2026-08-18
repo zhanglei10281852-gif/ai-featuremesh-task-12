@@ -56,13 +56,13 @@ func (s *MetricsService) RecordObservation(ctx context.Context, input RecordObse
 		}
 		if errors.Is(err, domain.ErrNotFound) {
 			active = domain.DriftIncident{ID: identity.New("drift"), InferenceRunID: run.ID, Status: domain.DriftIncidentOpen, ReviewDueAt: now.Add(workspace.ReviewDeadline), Version: 1, CreatedAt: now, UpdatedAt: now}
-			_ = active.WithReading(observation, now)
+			active.Include(observation, now)
 			if err := tx.InsertDriftIncident(ctx, active); err != nil {
 				return err
 			}
 		} else {
 			before := active.Version
-			_ = active.WithReading(observation, now)
+			active.Include(observation, now)
 			if err := tx.UpdateDriftIncident(ctx, active, before); err != nil {
 				return err
 			}

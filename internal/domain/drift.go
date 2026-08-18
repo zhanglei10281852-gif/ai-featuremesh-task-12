@@ -66,12 +66,6 @@ func (r QualityObservation) Validate() error {
 	return nil
 }
 
-func (e DriftIncident) WithReading(observation QualityObservation, now time.Time) DriftIncident {
-	copy := e
-	copy.Include(observation, now)
-	return copy
-}
-
 func (e *DriftIncident) Include(observation QualityObservation, now time.Time) {
 	if e.ObservationCount == 0 || observation.RecordedAt.Before(e.FirstObservationAt) {
 		e.FirstObservationAt = observation.RecordedAt
